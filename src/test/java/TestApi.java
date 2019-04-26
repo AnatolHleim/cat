@@ -41,18 +41,27 @@ public class TestApi {
   public void verifyStatusCodeSendMailUnregisteredEmail() {
     assertEquals(basic.getSendToMailConfirmResponse(properties.getProperty("validMail")).getStatusCode(), 404);
   }
-
+  @Test(priority = 4)
+  public void verifyStatusCodeEmptyEmailDataToRegister() {
+    assertEquals(basic.getRegisterNewAccountResponse("",properties.getProperty("nameUser") ,properties.getProperty("validPassword")).getStatusCode(), 422);
+  }
+  @Test(priority = 4)
+  public void verifyStatusCodeEmptyPasswordDataToRegister() {
+    assertEquals(basic.getRegisterNewAccountResponse(properties.getProperty("validEmail"),properties.getProperty("nameUser") ,"").getStatusCode(), 422);
+  }
   @Test(priority = 4)
   public void verifyStatusCodeValidDataToRegister() {
     assertEquals(basic.getRegisterNewAccountResponse(properties.getProperty("validEmail"),properties.getProperty("nameUser") ,properties.getProperty("validPassword")).getStatusCode(), 200);
+  }
+  @Test(priority = 4)
+  public void verifyStatusCodeValidDataWithoutUserNameToRegister() {
+    assertEquals(basic.getRegisterNewAccountResponse(properties.getProperty("emailToEmptyUserName"),properties.getProperty("") ,properties.getProperty("validPassword")).getStatusCode(), 200);
   }
 
   @Test(priority = 5)
   public void verifyStatusCodeSendMailRegisterAndNoConfirmedEmail() {
     assertEquals(basic.getSendToMailConfirmResponse(properties.getProperty("validEmail")).getStatusCode(), 200);
   }
-
-
   @Test(priority = 6)
   public void verifyStatusCodeNonConfirmEmailAuth() {
     assertEquals(basic.getAuthResponse(properties.getProperty("validEmail"), properties.getProperty("validPassword")).getStatusCode(), 403);
@@ -74,7 +83,6 @@ public class TestApi {
   }
   @Test(priority = 9)
   public void verifyStatusCodeCreateCreditionalsInvalidData() {
-    System.out.println();
     assertEquals(basic.getNewCreditionals(basic.getJsonValueToParameter(basic.getAuthResponse(properties.getProperty("validEmail"),
             properties.getProperty("validPassword")), "id"),
             "3424242423","xzcxzc").getStatusCode(), 422);
@@ -112,7 +120,7 @@ public class TestApi {
 
   @AfterTest
   public void cleanDB() {
-   // withMongo.deleteDb();
+    withMongo.deleteDb();
   }
 
 
